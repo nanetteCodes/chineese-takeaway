@@ -1,7 +1,7 @@
 export const foods = [
     {
         name: 'chow mein',
-        img: 'img/chow-meing.jpg'
+        img: 'img/chow-mein.jpg'
     },
     {
         name: 'dumplings',
@@ -21,7 +21,7 @@ export const foods = [
     },
     {
         name: 'lo mein',
-        img: 'img/lo-meing.jpg'
+        img: 'img/lo-mein.jpg'
     },
     {
         name: 'mangolean beef',

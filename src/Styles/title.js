@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 
-// TODO: add chinese font
+export const TitleMain = styled.div`
+font-family: kashima;
+`
 
 export const Title = styled.div`
-font-family: kashima;
+font-family: cursive;
 `
