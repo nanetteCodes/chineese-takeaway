@@ -13,7 +13,7 @@ const MenuTitle = styled(TitleMain)`
     margin-block-start: 10px;
 `;
 
-export function Menu() {
+export function Menu({ setOpenFood }) {
     return (
         <MenuStyled>
             {Object.entries(foods).map(([sectionName, foods, idx]) => (
@@ -21,7 +21,9 @@ export function Menu() {
                     <MenuTitle>{sectionName}</MenuTitle>
                     <FoodGrid>
                         {foods.map((food, idx) => (
-                            <Food img={food.img} key={idx}><FoodLabel>{food.name}</FoodLabel></Food>
+                            <Food img={food.img} key={idx} onClick={() => {
+                                setOpenFood(food);
+                            }}><FoodLabel>{food.name}</FoodLabel></Food>
                         ))}
                     </FoodGrid>
                 </div>
