@@ -21,11 +21,32 @@ const OrderContent = styled(DialogContent)`
     height: 100%;
 `;
 
-export function Order() {
+const OrderContainer = styled(DialogContent)`
+    padding: 10px 0;
+    border-bottom: 1px solid grey;
+`;
+
+const OrderItem = styled(DialogContent)`
+    padding: 10px 0;
+`;
+
+export function Order({ orders }) {
     return <OrderStyled>
-        <OrderContent>
-            Add to Order
-        </OrderContent>
+        {orders.length === 0 ? (
+            <OrderContent>Add to Order</OrderContent>
+        ) : (
+                <OrderContent>
+                    <OrderContainer>Your Order:</OrderContainer>
+                    {orders.map((order, idx) => (
+                        <OrderContainer key={idx}>
+                            <OrderItem>
+                                {order.name}
+                            </OrderItem>
+                        </OrderContainer>
+                    ))}
+                </OrderContent>
+            )}
+
         <DialogFooter>
             <ConfirmButton>Checkout</ConfirmButton>
         </DialogFooter>
