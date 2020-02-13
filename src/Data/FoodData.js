@@ -20,10 +20,6 @@ export const foodItems = [
         img: 'img/lo-mein.jpg',
         section: 'Noodles'
     }, {
-        name: 'fried rice',
-        img: 'img/fried-rice.jpg',
-        section: 'Rice'
-    }, {
         name: 'garlic shrimp',
         img: 'img/garlic-shrimp.jpg',
         section: 'Mains'
@@ -35,8 +31,12 @@ export const foodItems = [
         name: 'orange chicken',
         img: 'img/orange-chicken.jpg',
         section: 'Mains'
+    }, {
+        name: 'fried rice',
+        img: 'img/fried-rice.jpg',
+        section: 'Rice'
     }
-]
+];
 
 export const foods = foodItems.reduce((res, food) => {
     if (!res[food.section]) {
@@ -44,4 +44,4 @@ export const foods = foodItems.reduce((res, food) => {
     }
     res[food.section].push(food);
     return res;
-}, {})
+}, {});
