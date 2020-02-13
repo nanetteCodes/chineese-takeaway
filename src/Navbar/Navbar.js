@@ -11,9 +11,10 @@ export const NavbarStyled = styled.div`
     z-index: 999;
 `
 const Logo = styled(Title)`
-  font-size: 20px;
+  font-size: 30px;
   color: white;
   text-shadow: 1px 1px 4px black;
+  letter-spacing: 1px;
 `
 export function Navbar() {
     return <NavbarStyled>

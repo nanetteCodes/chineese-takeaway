@@ -1,0 +1,4 @@
+@font-face {
+    font-family: 'kashima';
+    src: local('kashima'), url(./fonts/kashima_demo-webfont.woff) format('truetype');
+  }
