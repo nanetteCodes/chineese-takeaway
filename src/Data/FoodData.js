@@ -51,6 +51,10 @@ export const foodItems = [
         img: 'img/fried-rice.jpg',
         price: 2.5,
         section: 'Rice'
+    }, {
+        price: 1,
+        name: 'Soda',
+        choices: ['Coke', 'Diet Coke', 'Sprite']
     }
 ];
 
