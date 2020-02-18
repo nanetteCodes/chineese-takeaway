@@ -12,43 +12,43 @@ import { useChoice } from '../Hooks/useChoice';
 import { Choices } from './Choices';
 
 const Dialog = styled.div`
-    width: 500px;
-    background-color: white;
-    position: fixed;
-    top: 75px;
-    left: calc(50% - 250px);
-    z-index: 11;
-    max-height: calc(100% - 100px);
-    display: flex;
-    flex-direction: column;
+  width: 500px;
+  background-color: white;
+  position: fixed;
+  top: 75px;
+  left: calc(50% - 250px);
+  z-index: 11;
+  max-height: calc(100% - 100px);
+  display: flex;
+  flex-direction: column;
 `;
 
 export const DialogContent = styled.div`
-    overflow: auto;
-    padding: 0px 40px;
-    padding-bottom: 80px;
+  overflow: auto;
+  padding: 0px 40px;
+  padding-bottom: 80px;
 `;
 
 export const DialogFooter = styled.div`
-    box-shadow: 0px -2px 10px 0px grey;
-    height: 60px;
-    display: flex;
-    justify-content: center;
+  box-shadow: 0px -2px 10px 0px grey;
+  height: 60px;
+  display: flex;
+  justify-content: center;
 `;
 
 export const ConfirmButton = styled(Title)`
-    margin: 10px;
-    color: white;
-    height: 20px;
-    border-radius: 5px;
-    padding: 10px;
-    text-align: center;
-    width: 200px;
-    cursor: pointer;
-    background-color: ${pizzaRed};
-    ${({ disabled }) =>
-        disabled &&
-        `
+  margin: 10px;
+  color: white;
+  height: 20px;
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+  width: 200px;
+  cursor: pointer;
+  background-color: ${pizzaRed};
+  ${({ disabled }) =>
+    disabled &&
+    `
     opactity: .5; 
     background-color: grey; 
     pointer-events: none; 
@@ -56,94 +56,106 @@ export const ConfirmButton = styled(Title)`
 `;
 
 const DialogShadow = styled.div`
-    position: fixed;
-    height: 100%;
-    width: 100%;
-    top: 0px;
-    background-color: black;
-    opacity: 0.7;
-    z-index: 4;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  background-color: black;
+  opacity: 0.7;
+  z-index: 4;
 `;
 
 const DialogBanner = styled.div`
-    min-height: 200px;
-    margin-bottom: 20px;
-    ${({ img }) => (img ? `background-image: url(${img});` : `min-height: 75px;`)}
-    background-position: center;
-    background-size: cover;
+  min-height: 200px;
+  margin-bottom: 20px;
+  ${({ img }) => (img ? `background-image: url(${img});` : `min-height: 75px;`)}
+  background-position: center;
+  background-size: cover;
 `;
 
 const DialogBannerName = styled(FoodLabel)`
-    font-size: 30px;
-    padding: 5px 40px;
-    top: ${({ img }) => (img ? `100px` : `20px`)};
+  font-size: 30px;
+  padding: 5px 40px;
+  top: ${({ img }) => (img ? `100px` : `20px`)};
 `;
 
 const pricePerTopping = 3.5;
 
 export function getPrice(order) {
-    return (
-        order.quantity *
-        (order.price +
-            order.toppings.filter(t => t.checked).length * pricePerTopping)
-    );
+  return (
+    order.quantity *
+    (order.price +
+      order.toppings.filter(t => t.checked).length * pricePerTopping)
+  );
 }
 
 function hasToppings(food) {
-    return food.section === 'Mains';
+  return food.section === 'Mains';
 }
 
 function FoodDialogContainer({ openFood, setOpenFood, setOrders, orders }) {
-    const quantity = useQuantity(openFood && openFood.quantity);
-    const toppings = useToppings(openFood.toppings);
-    const choiceRadio = useChoice(openFood.choice);
+  const quantity = useQuantity(openFood && openFood.quantity);
+  const toppings = useToppings(openFood.toppings);
+  const choiceRadio = useChoice(openFood.choice);
+  const isEditing = openFood.idx > -1;
 
-    function close() {
-        setOpenFood();
-    }
+  function close() {
+    setOpenFood();
+  }
 
-    const order = {
-        ...openFood,
-        quantity: quantity.value,
-        toppings: toppings.toppings,
-        choice: choiceRadio.value
-    };
+  const order = {
+    ...openFood,
+    quantity: quantity.value,
+    toppings: toppings.toppings,
+    choice: choiceRadio.value,
+  };
 
-    function addToOrder() {
-        setOrders([...orders, order]);
-        close();
-    }
+  function editOrder(newOrder) {
+    const newOrders = [...orders];
+    newOrders[openFood.idx] = order;
+    setOrders(newOrders);
+    close();
+  }
 
-    return (
-        <>
-            <DialogShadow onClick={close} />
-            <Dialog>
-                <DialogBanner img={openFood.img}>
-                    <DialogBannerName>{openFood.name}</DialogBannerName>
-                </DialogBanner>
-                <DialogContent>
-                    <QuantityInput quantity={quantity} />
-                    {hasToppings(openFood) && <>
-                        <h3>Would you like sides?</h3>
-                        <Toppings {...toppings} />
-                    </>}
-                    {openFood.choices && <Choices openFood={openFood} choiceRadio={choiceRadio} />}
-                </DialogContent>
-                <DialogFooter>
-                    <ConfirmButton
-                        onClick={addToOrder}
-                        disabled={openFood.choices && !choiceRadio.value}
-                    >
-                        Add to order:
-                        {formatPrice(getPrice(order))}
-                    </ConfirmButton>
-                </DialogFooter>
-            </Dialog>
-        </>
-    );
-};
+  function addToOrder() {
+    setOrders([...orders, order]);
+    close();
+  }
+
+  return (
+    <>
+      <DialogShadow onClick={close} />
+      <Dialog>
+        <DialogBanner img={openFood.img}>
+          <DialogBannerName>{openFood.name}</DialogBannerName>
+        </DialogBanner>
+        <DialogContent>
+          <QuantityInput quantity={quantity} />
+          {hasToppings(openFood) && (
+            <>
+              <h3>Would you like sides?</h3>
+              <Toppings {...toppings} />
+            </>
+          )}
+          {openFood.choices && (
+            <Choices openFood={openFood} choiceRadio={choiceRadio} />
+          )}
+        </DialogContent>
+        <DialogFooter>
+          <ConfirmButton
+            onClick={isEditing ? editOrder : addToOrder}
+            disabled={openFood.choices && !choiceRadio.value}
+          >
+            {isEditing ? 'Edit Order: ' : 'Add to order:'}
+            {formatPrice(getPrice(order))}
+          </ConfirmButton>
+        </DialogFooter>
+      </Dialog>
+    </>
+  );
+}
 
 export function FoodDialog(props) {
-    if (!props.openFood) return null;
-    return <FoodDialogContainer {...props} />;
+  if (!props.openFood) return null;
+  return <FoodDialogContainer {...props} />;
 }

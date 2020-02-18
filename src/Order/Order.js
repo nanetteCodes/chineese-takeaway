@@ -1,38 +1,52 @@
 import React from 'react';
 import styled from 'styled-components';
-import { DialogContent, DialogFooter, ConfirmButton } from '../FoodDialog/FoodDialog';
+import {
+  DialogContent,
+  DialogFooter,
+  ConfirmButton,
+} from '../FoodDialog/FoodDialog';
 import { formatPrice } from '../Data/FoodData';
-import { getPrice } from "../FoodDialog/FoodDialog";
-
+import { getPrice } from '../FoodDialog/FoodDialog';
 
 const OrderStyled = styled.div`
-    position: fixed;
-    right: 0;
-    top: 59px;
-    width: 340px;
-    background-color: white;
-    height: calc(100% - 59px);
-    z-index: 10;
-    box-shadow: 4px 0 5px 4px grey;
-    display: flex;
-    flex-direction: column;
+  position: fixed;
+  right: 0;
+  top: 59px;
+  width: 340px;
+  background-color: white;
+  height: calc(100% - 59px);
+  z-index: 10;
+  box-shadow: 4px 0 5px 4px grey;
+  display: flex;
+  flex-direction: column;
 `;
 
 const OrderContent = styled(DialogContent)`
-    padding: 20px;
-    height: 100%;
+  padding: 20px;
+  height: 100%;
 `;
 
 const OrderContainer = styled(DialogContent)`
-    padding: 10px 0;
-    border-bottom: 1px solid grey;
+  padding: 10px 0;
+  border-bottom: 1px solid grey;
+  ${({ editable }) =>
+    editable
+      ? `
+  &:hover {
+    cursor: pointer;
+    background-color: #e7e7e7;
+  }
+`
+      : `
+  pointer-events: none; 
+`}
 `;
 
 const OrderItem = styled(DialogContent)`
-    padding: 10px 0;
-    display: grid;
-    grid-template-columns: 20px 150px 20px 60px;
-    justify-content: space-between;
+  padding: 10px 0;
+  display: grid;
+  grid-template-columns: 20px 150px 20px 60px;
+  justify-content: space-between;
 `;
 
 const DetailItem = styled.div`
@@ -40,56 +54,80 @@ const DetailItem = styled.div`
   font-size: 10px;
 `;
 
-export function Order({ orders }) {
-    const subtotal = orders.reduce((total, order) => {
-        return total + getPrice(order);
-    }, 0);
-    const tax = subtotal * 0.07;
-    const total = subtotal + tax;
+export function Order({ orders, setOrders, setOpenFood }) {
+  const subtotal = orders.reduce((total, order) => {
+    return total + getPrice(order);
+  }, 0);
+  const tax = subtotal * 0.07;
+  const total = subtotal + tax;
 
-    return <OrderStyled>
-        {orders.length === 0 ? (
-            <OrderContent>Add to Order</OrderContent>
-        ) : (
-                <OrderContent>
-                    <OrderContainer>Your Order:</OrderContainer>
-                    {orders.map((order, idx) => (
-                        <OrderContainer key={idx}>
-                            <OrderItem>
-                                <div>{order.quantity}</div>
-                                <div>{order.name}</div>
-                                <div></div>
-                                <div>{formatPrice(getPrice(order))}</div>
-                            </OrderItem>
-                            <DetailItem>{order.toppings
-                                .filter(t => t.checked)
-                                .map(topping => topping.name)
-                                .join(", ")}</DetailItem>
-                            {order.choice && <DetailItem>{order.choice}</DetailItem>}
-                        </OrderContainer>
-                    ))}
-                    <OrderContainer>
-                        <OrderItem>
-                            <div />
-                            <div>Sub-Total</div>
-                            <div>{formatPrice(subtotal)}</div>
-                        </OrderItem>
-                        <OrderItem>
-                            <div />
-                            <div>Tax</div>
-                            <div>{formatPrice(tax)}</div>
-                        </OrderItem>
-                        <OrderItem>
-                            <div />
-                            <div>Total</div>
-                            <div>{formatPrice(total)}</div>
-                        </OrderItem>
-                    </OrderContainer>
-                </OrderContent>
-            )}
+  const deleteItem = index => {
+    const newOrders = [...orders];
+    newOrders.splice(index, 1);
+    setOrders(newOrders);
+  };
 
-        <DialogFooter>
-            <ConfirmButton>Checkout</ConfirmButton>
-        </DialogFooter>
-    </OrderStyled>;
+  return (
+    <OrderStyled>
+      {orders.length === 0 ? (
+        <OrderContent>Add to Order</OrderContent>
+      ) : (
+        <OrderContent>
+          <OrderContainer>Your Order:</OrderContainer>
+          {orders.map((order, idx) => (
+            <OrderContainer editable key={idx}>
+              <OrderItem
+                onClick={() => {
+                  setOpenFood({ ...order, idx });
+                }}
+              >
+                <div>{order.quantity}</div>
+                <div>{order.name}</div>
+                <span
+                  style={{ cursor: 'pointer' }}
+                  onClick={e => {
+                    e.stopPropagation();
+                    deleteItem(idx);
+                  }}
+                  role="img"
+                  aria-label="delete item"
+                >
+                  🗑️
+                </span>
+                <div>{formatPrice(getPrice(order))}</div>
+              </OrderItem>
+              <DetailItem>
+                {order.toppings
+                  .filter(t => t.checked)
+                  .map(topping => topping.name)
+                  .join(', ')}
+              </DetailItem>
+              {order.choice && <DetailItem>{order.choice}</DetailItem>}
+            </OrderContainer>
+          ))}
+          <OrderContainer>
+            <OrderItem>
+              <div />
+              <div>Sub-Total</div>
+              <div>{formatPrice(subtotal)}</div>
+            </OrderItem>
+            <OrderItem>
+              <div />
+              <div>Tax</div>
+              <div>{formatPrice(tax)}</div>
+            </OrderItem>
+            <OrderItem>
+              <div />
+              <div>Total</div>
+              <div>{formatPrice(total)}</div>
+            </OrderItem>
+          </OrderContainer>
+        </OrderContent>
+      )}
+
+      <DialogFooter>
+        <ConfirmButton>Checkout</ConfirmButton>
+      </DialogFooter>
+    </OrderStyled>
+  );
 }
