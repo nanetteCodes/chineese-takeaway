@@ -1,7 +1,7 @@
 {
   "rules": {
     "orders": {
-      ".write": false
+      ".write": true
     }
   }
 }
